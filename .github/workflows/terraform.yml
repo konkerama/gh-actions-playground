@@ -53,7 +53,48 @@ permissions:
   contents: read
 
 jobs:
+  terraform-destroy:
+    if: vars.tfdestroy == 'true'
+    name: 'Terraform Destroy'
+    runs-on: ubuntu-latest
+    environment: production
+    permissions:
+      id-token: write
+      contents: read
+
+    # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+    # Checkout the repository to the GitHub Actions runner
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    # Install the latest version of Terraform CLI and configure the Terraform CLI configuration file with a Terraform Cloud user API token
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v1
+      with:
+        cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
+
+    - name: Configure AWS credentials from Test account
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        role-to-assume: ${{ secrets.IAMROLEARN }}
+        aws-region: ${{ vars.AWSRegion }}
+
+    # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
+    - name: Terraform Init
+      working-directory: ./terraform-manifests
+      run: terraform init -reconfigure -backend-config="bucket=${{ secrets.TFS3BUCKET }}" -backend-config="key=${{ secrets.TFS3KEY }}" -backend-config="region=${{ vars.AWSRegion }}"
+
+    - name: Terraform Destroy
+      working-directory: ./terraform-manifests
+      run: terraform destroy --auto-approve
+
   terraform:
+    if: vars.tfdestroy == 'false'
     name: 'Terraform'
     runs-on: ubuntu-latest
     environment: production
@@ -88,19 +129,19 @@ jobs:
       working-directory: ./terraform-manifests
       run: terraform init -reconfigure -backend-config="bucket=${{ secrets.TFS3BUCKET }}" -backend-config="key=${{ secrets.TFS3KEY }}" -backend-config="region=${{ vars.AWSRegion }}"
 
-    # # Checks that all Terraform configuration files adhere to a canonical format
-    # - name: Terraform Format
-    #   working-directory: ./terraform-manifests
-    #   run: terraform fmt -check
+    # Checks that all Terraform configuration files adhere to a canonical format
+    - name: Terraform Format
+      working-directory: ./terraform-manifests
+      run: terraform fmt -check
 
-    # # Generates an execution plan for Terraform
-    # - name: Terraform Plan
-    #   working-directory: ./terraform-manifests
-    #   run: terraform plan -input=false
+    # Generates an execution plan for Terraform
+    - name: Terraform Plan
+      working-directory: ./terraform-manifests
+      run: terraform plan -input=false
 
-    #   # On push to "main", build or change infrastructure according to Terraform configuration files
-    #   # Note: It is recommended to set up a required "strict" status check in your repository for "Terraform Cloud". See the documentation on "strict" required status checks for more information: https://help.github.com/en/github/administering-a-repository/types-of-required-status-checks
-    # - name: Terraform Apply
-    #   working-directory: ./terraform-manifests
-    #   if: github.ref == 'refs/heads/"main"' && github.event_name == 'push'
-    #   run: terraform apply -auto-approve -input=false
+      # On push to "main", build or change infrastructure according to Terraform configuration files
+      # Note: It is recommended to set up a required "strict" status check in your repository for "Terraform Cloud". See the documentation on "strict" required status checks for more information: https://help.github.com/en/github/administering-a-repository/types-of-required-status-checks
+    - name: Terraform Apply
+      working-directory: ./terraform-manifests
+      if: github.ref == 'refs/heads/"main"' && github.event_name == 'push'
+      run: terraform apply -auto-approve -input=false
