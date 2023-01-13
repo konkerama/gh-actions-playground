@@ -21,7 +21,7 @@ variable "environment" {
 }
 
 variable memory {
-  type        = Number
+  type        = number
   default     = "128"
 }
 
