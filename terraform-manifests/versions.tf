@@ -8,11 +8,11 @@ terraform {
     }
   }
 
-  # backend "s3" {
-  #   bucket = "<this will be changed after terraform init>"
-  #   key    = "<this will be changed after terraform init>"
-  #   region = "<this will be changed after terraform init>"
-  # }
+  backend "s3" {
+    bucket = "<this will be changed after terraform init>"
+    key    = "<this will be changed after terraform init>"
+    region = "<this will be changed after terraform init>"
+  }
 }
 
 # Provider Block
