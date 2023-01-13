@@ -7,7 +7,7 @@ URL = "https://raw.githubusercontent.com/konkerama/konkerama.github.io/master/co
 
 def lambda_handler(event, context):
     ''' Lambda Handler '''
-    response = requests.get(url=URL)
+    response = requests.get(url=URL, timeout=10)
     print (response.text)
     print (event)
     print (context)
