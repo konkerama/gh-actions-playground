@@ -20,8 +20,8 @@ variable "environment" {
   type        = string
 }
 
-variable memory {
-  type        = number
-  default     = "128"
+variable "memory" {
+  type    = number
+  default = "128"
 }
 
