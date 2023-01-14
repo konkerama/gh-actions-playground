@@ -59,7 +59,7 @@ jobs:
     name: 'deploy'
     runs-on: ubuntu-latest
     needs: build
-    environment: echo ${{ env.ENV_NAME }}
+    # environment: ${{ env.ENV_NAME }}
     permissions:
       id-token: write
       contents: read
