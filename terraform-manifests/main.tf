@@ -4,8 +4,8 @@ module "lambda_function" {
   function_name = "${var.resource_name}-${var.environment}"
   description   = "My awesome lambda function"
   handler       = "index.lambda_handler"
-  runtime     = "python3.8"
-  memory_size = var.memory
+  runtime       = "python3.8"
+  memory_size   = var.memory
 
   environment_variables = {
     ENV = var.environment
@@ -14,9 +14,8 @@ module "lambda_function" {
 
 
   s3_existing_package = {
-    bucket     = var.lambda-artifact-s3-bucket
-    key        = var.lambda-artifact-s3-key
-    version_id = null
+    bucket = var.lambda-artifact-s3-bucket
+    key    = var.lambda-artifact-s3-key
   }
 
 
