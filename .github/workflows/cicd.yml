@@ -109,3 +109,7 @@ jobs:
       working-directory: ./terraform-manifests
       if: (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev' )&& github.event_name == 'push'
       run: terraform apply -auto-approve -input=false -var-file=envs/${{ env.BRANCH_NAME }}.tfvars
+
+    - name: Terraform Apply
+      working-directory: ./terraform-manifests
+      run: ls
