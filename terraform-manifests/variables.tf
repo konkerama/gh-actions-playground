@@ -31,9 +31,11 @@ variable "url" {
 
 variable "lambda-artifact-s3-bucket"{
   type    = string
+  default = "to-be-overridden"
 }
 
 variable "lambda-artifact-s3-key"{
   type    = string
+  default = "to-be-overridden"
 }
 
