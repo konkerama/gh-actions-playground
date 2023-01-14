@@ -13,6 +13,9 @@ module "lambda_function" {
   }
 
 
+
+  var.resource_name
+
   source_path = "../src/sample-function"
 
   tags = {
