@@ -26,15 +26,15 @@ variable "memory" {
 }
 
 variable "url" {
-  type    = string
+  type = string
 }
 
-variable "lambda-artifact-s3-bucket"{
+variable "lambda-artifact-s3-bucket" {
   type    = string
   default = "to-be-overridden"
 }
 
-variable "lambda-artifact-s3-key"{
+variable "lambda-artifact-s3-key" {
   type    = string
   default = "to-be-overridden"
 }

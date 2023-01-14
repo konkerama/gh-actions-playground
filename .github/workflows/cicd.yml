@@ -62,10 +62,10 @@ jobs:
       run: |
         pip install -t ./package -r requirements.txt
         cd package
-        zip -r ../sample-lambda-${{ steps.get_commit_id.outputs.commit_id }}.zip .
+        zip -r ../sample-lambda-$GITHUB_SHA.zip .
         cd ..
-        zip sample-lambda-${{ steps.get_commit_id.outputs.commit_id }}.zip *.py
-        aws s3 cp ./sample-lambda-${{ steps.get_commit_id.outputs.commit_id }}.zip s3://${{secrets.TFS3BUCKET}}/sample-lambda/artifacts/sample-lambda-${{steps.get_commit_id.outputs.commit_id}}.zip
+        zip sample-lambda-$GITHUB_SHA.zip *.py
+        aws s3 cp ./sample-lambda-$GITHUB_SHA.zip s3://${{secrets.TFS3BUCKET}}/sample-lambda/artifacts/sample-lambda-$GITHUB_SHA.zip
 
   deploy:
     name: 'deploy'
@@ -142,4 +142,4 @@ jobs:
     - name: Terraform Apply
       working-directory: ./terraform-manifests
       if: (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev' )&& github.event_name == 'push'
-      run: terraform apply -auto-approve -input=false -var-file=envs/dev.tfvars -var lambda-artifact-s3-bucket=${{secrets.TFS3KEY}} -var lambda-artifact-s3-key=sample-lambda/artifacts/sample-lambda-${{steps.get_commit_id.outputs.commit_id}}.zip
+      run: terraform apply -auto-approve -input=false -var-file=envs/dev.tfvars -var lambda-artifact-s3-bucket=${{secrets.TFS3KEY}} -var lambda-artifact-s3-key=sample-lambda/artifacts/sample-lambda-$GITHUB_SHA.zip
