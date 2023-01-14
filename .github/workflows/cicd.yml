@@ -28,8 +28,9 @@ jobs:
         pip install pylint
         pip install -r $(git ls-files '*requirements.txt')
     - name: Analysing the code with pylint
-      run: |
-        pylint $(git ls-files '*.py')
+      run: pylint $(git ls-files '*.py')
+    - name: Test Code
+      run: pytest
 
   deploy:
     name: 'deploy'
