@@ -7,6 +7,11 @@ module "lambda_function" {
   runtime       = "python3.8"
   memory_size   = var.memory
 
+  environment_variables = {
+    ENV = var.environment
+  }
+
+
   source_path = "../src/sample-function"
 
   tags = {
