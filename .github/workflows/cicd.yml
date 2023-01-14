@@ -112,4 +112,6 @@ jobs:
 
     - name: Terraform Apply
       working-directory: ./terraform-manifests
-      run: ls
+      run: |
+        cd builds
+        ls
