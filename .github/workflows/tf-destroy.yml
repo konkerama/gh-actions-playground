@@ -49,4 +49,4 @@ jobs:
 
     - name: Terraform Destroy
       working-directory: ./terraform-manifests
-      run: terraform destroy --auto-approve
+      run: terraform destroy --auto-approve -var-file=envs/${{github.ref_name}}.tfvars
