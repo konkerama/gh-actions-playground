@@ -17,15 +17,21 @@ jobs:
         python-version: ["3.8"]
     steps:
     - uses: actions/checkout@v3
-    - name: Get branch name (merge)
-      if: github.event_name != 'pull_request'
-      shell: bash
-      run: echo "BRANCH_NAME=$(echo ${{github.ref_name}})" >> $GITHUB_ENV
+    # - name: Get branch name (merge)
+    #   if: github.event_name != 'pull_request'
+    #   shell: bash
+    #   run: echo "BRANCH_NAME=$(echo ${{github.ref_name}})" >> $GITHUB_ENV
 
-    - name: Get branch name (pull request)
-      if: github.event_name == 'pull_request'
-      shell: bash
-      run: echo "BRANCH_NAME=$(echo ${{github.base_ref}})" >> $GITHUB_ENV
+    # - name: Get branch name (pull request)
+    #   if: github.event_name == 'pull_request'
+    #   shell: bash
+    #   run: echo "BRANCH_NAME=$(echo ${{github.base_ref}})" >> $GITHUB_ENV
+
+    - name: Configure AWS credentials from Test account
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        role-to-assume: ${{ secrets.IAMROLEARN }}
+        aws-region: ${{ vars.AWSRegion }}
 
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v4
