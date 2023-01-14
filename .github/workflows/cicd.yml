@@ -98,12 +98,16 @@ jobs:
     - name: Get branch name (merge)
       if: github.event_name != 'pull_request'
       shell: bash
-      run: echo "BRANCH_NAME=$(echo ${github.ref_name})" >> $GITHUB_ENV
+      run: echo "BRANCH_NAME=$(echo ${{github.ref_name}})" >> $GITHUB_ENV
 
     - name: Get branch name (pull request)
       if: github.event_name == 'pull_request'
       shell: bash
-      run: echo "BRANCH_NAME=$(echo ${github.event.pull_request.head.ref})" >> $GITHUB_ENV
+      run: echo "BRANCH_NAME=$(echo ${{github.event.pull_request.head.ref}})" >> $GITHUB_ENV
+
+    - name: Print branch name
+      shell: bash
+      run: echo ${{ env.BRANCH_NAME }}
 
 
     - uses: actions/setup-python@v4
