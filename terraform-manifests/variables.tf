@@ -29,3 +29,11 @@ variable "url" {
   type    = string
 }
 
+variable "lambda-artifact-s3-bucket"{
+  type    = string
+}
+
+variable "lambda-artifact-s3-key"{
+  type    = string
+}
+
