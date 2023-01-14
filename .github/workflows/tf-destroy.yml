@@ -45,7 +45,11 @@ jobs:
     # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
     - name: Terraform Init
       working-directory: ./terraform-manifests
-      run: terraform init -reconfigure -backend-config="bucket=${{ secrets.TFS3BUCKET }}" -backend-config="key=${{ secrets.TFS3KEY }}" -backend-config="region=${{ vars.AWSRegion }}"
+      run: |
+        terraform init -reconfigure \
+          -backend-config="bucket=${{ secrets.TFS3BUCKET }}" \
+          -backend-config="key=${{secrets.TFS3KEY}}/${{github.ref_name}}/terraform.tfstate" \
+          -backend-config="region=${{vars.AWSRegion}}"
 
     - name: Terraform Destroy
       working-directory: ./terraform-manifests

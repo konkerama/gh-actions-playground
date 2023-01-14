@@ -114,7 +114,16 @@ jobs:
     # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
     - name: Terraform Init
       working-directory: ./terraform-manifests
-      run: terraform init -reconfigure -backend-config="bucket=${{ secrets.TFS3BUCKET }}" -backend-config="key=${{ secrets.TFS3KEY }}" -backend-config="region=${{ vars.AWSRegion }}"
+      run: echo ${{github.ref_name}}
+
+    # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
+    - name: Terraform Init
+      working-directory: ./terraform-manifests
+      run: |
+        terraform init -reconfigure \
+          -backend-config="bucket=${{ secrets.TFS3BUCKET }}" \
+          -backend-config="key=${{secrets.TFS3KEY}}/${{github.ref_name}}/terraform.tfstate" \
+          -backend-config="region=${{vars.AWSRegion}}"
 
     # Checks that all Terraform configuration files adhere to a canonical format
     - name: Terraform Format
@@ -130,5 +139,5 @@ jobs:
       # Note: It is recommended to set up a required "strict" status check in your repository for "Terraform Cloud". See the documentation on "strict" required status checks for more information: https://help.github.com/en/github/administering-a-repository/types-of-required-status-checks
     - name: Terraform Apply
       working-directory: ./terraform-manifests
-      if: ( github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev' )&& github.event_name == 'push'
+      if: (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev' )&& github.event_name == 'push'
       run: terraform apply -auto-approve -input=false -var-file=envs/${{github.ref_name}}.tfvars
