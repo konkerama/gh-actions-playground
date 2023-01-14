@@ -1,6 +1,6 @@
 '''Python Tests'''
-import index
 import os
+import index
 
 ENV = os.environ['ENV']
 
