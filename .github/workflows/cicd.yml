@@ -9,9 +9,8 @@ permissions:
   contents: read
 
 jobs:
-
-  pylint:
-    name: 'PyLint'
+  build:
+    name: 'build'
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -32,11 +31,11 @@ jobs:
       run: |
         pylint $(git ls-files '*.py')
 
-  terraform:
-    name: 'Terraform'
+  deploy:
+    name: 'deploy'
     runs-on: ubuntu-latest
-    needs: pylint
-    environment: production
+    needs: build
+    # environment: production
     permissions:
       id-token: write
       contents: read
@@ -82,17 +81,6 @@ jobs:
       with:
         role-to-assume: ${{ secrets.IAMROLEARN }}
         aws-region: ${{ vars.AWSRegion }}
-
-    # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
-    - name: Terraform Init
-      working-directory: ./terraform-manifests
-      run: echo ${{github.ref_name}}
-
-    # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
-    - name: Terraform Init
-      working-directory: ./terraform-manifests
-      run: echo ${{github.event.pull_request.head.ref}}
-
 
     # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
     - name: Terraform Init
