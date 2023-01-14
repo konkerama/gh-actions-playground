@@ -142,8 +142,9 @@ jobs:
     - name: Terraform Apply
       working-directory: ./terraform-manifests
       if: (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev' )&& github.event_name == 'push'
-      run: terraform apply -auto-approve \
-                           -input=false \
-                           -var-file=envs/dev.tfvars \
-                           -var lambda-artifact-s3-bucket=${{secrets.TFS3BUCKET}} \
-                           -var lambda-artifact-s3-key=sample-lambda/artifacts/sample-lambda-$GITHUB_SHA.zip
+      run: |
+        terraform apply -auto-approve \
+                        -input=false \
+                        -var-file=envs/dev.tfvars \
+                        -var lambda-artifact-s3-bucket=${{secrets.TFS3BUCKET}} \
+                        -var lambda-artifact-s3-key=sample-lambda/artifacts/sample-lambda-$GITHUB_SHA.zip
