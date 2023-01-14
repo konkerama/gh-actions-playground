@@ -3,7 +3,7 @@ module "lambda_function" {
 
   function_name = "${var.resource_name}-${var.environment}"
   description   = "My awesome lambda function"
-  # handler       = "index.lambda_handler"
+  handler       = "index.lambda_handler"
   runtime     = "python3.8"
   memory_size = var.memory
 
