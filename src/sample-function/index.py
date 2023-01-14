@@ -15,7 +15,7 @@ def lambda_handler(event, context):
     print (response.text)
     print (event)
     print (context)
-    return "Hello World"
+    return "env="+ENV
 
 if __name__=="__main__":
     lambda_handler("","")
