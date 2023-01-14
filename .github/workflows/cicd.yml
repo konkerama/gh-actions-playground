@@ -95,6 +95,21 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v3
 
+    - name: Get branch name (merge)
+      if: github.event_name != 'pull_request'
+      shell: bash
+      run: echo "BRANCH_NAME=$(echo ${{github.ref_name}})" >> $GITHUB_ENV
+
+    - name: Get branch name (pull request)
+      if: github.event_name == 'pull_request'
+      shell: bash
+      run: echo "BRANCH_NAME=$(echo ${{github.base_ref}})" >> $GITHUB_ENV
+
+    - name: Print branch name
+      shell: bash
+      run: echo ${{ env.BRANCH_NAME }}
+
+
     - uses: actions/setup-python@v4
       with:
         python-version: '3.8' 
@@ -114,7 +129,22 @@ jobs:
     # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
     - name: Terraform Init
       working-directory: ./terraform-manifests
-      run: terraform init -reconfigure -backend-config="bucket=${{ secrets.TFS3BUCKET }}" -backend-config="key=${{ secrets.TFS3KEY }}" -backend-config="region=${{ vars.AWSRegion }}"
+      run: echo ${{github.ref_name}}
+
+    # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
+    - name: Terraform Init
+      working-directory: ./terraform-manifests
+      run: echo ${{github.event.pull_request.head.ref}}
+
+
+    # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
+    - name: Terraform Init
+      working-directory: ./terraform-manifests
+      run: |
+        terraform init -reconfigure \
+          -backend-config="bucket=${{ secrets.TFS3BUCKET }}" \
+          -backend-config="key=${{secrets.TFS3KEY}}/${{ env.BRANCH_NAME }}/terraform.tfstate" \
+          -backend-config="region=${{vars.AWSRegion}}"
 
     # Checks that all Terraform configuration files adhere to a canonical format
     - name: Terraform Format
@@ -124,11 +154,11 @@ jobs:
     # Generates an execution plan for Terraform
     - name: Terraform Plan
       working-directory: ./terraform-manifests
-      run: terraform plan -input=false -var-file=envs/${{github.ref_name}}.tfvars
+      run: terraform plan -input=false -var-file=envs/${{ env.BRANCH_NAME }}.tfvars
 
       # On push to "main", build or change infrastructure according to Terraform configuration files
       # Note: It is recommended to set up a required "strict" status check in your repository for "Terraform Cloud". See the documentation on "strict" required status checks for more information: https://help.github.com/en/github/administering-a-repository/types-of-required-status-checks
     - name: Terraform Apply
       working-directory: ./terraform-manifests
-      if: ( github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev' )&& github.event_name == 'push'
-      run: terraform apply -auto-approve -input=false -var-file=envs/${{github.ref_name}}.tfvars
+      if: (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev' )&& github.event_name == 'push'
+      run: terraform apply -auto-approve -input=false -var-file=envs/${{ env.BRANCH_NAME }}.tfvars
