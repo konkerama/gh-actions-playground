@@ -67,7 +67,7 @@ jobs:
         zip sample-lambda-$GITHUB_SHA.zip *.py
         aws s3 cp ./sample-lambda-$GITHUB_SHA.zip s3://${{secrets.TFS3BUCKET}}/sample-lambda/artifacts/sample-lambda-$GITHUB_SHA.zip
 
-  deploy:
+  deploy-dev:
     name: 'deploy'
     runs-on: ubuntu-latest
     needs: build
@@ -141,10 +141,92 @@ jobs:
       # Note: It is recommended to set up a required "strict" status check in your repository for "Terraform Cloud". See the documentation on "strict" required status checks for more information: https://help.github.com/en/github/administering-a-repository/types-of-required-status-checks
     - name: Terraform Apply
       working-directory: ./terraform-manifests
-      if: (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev' )&& github.event_name == 'push'
+      if: github.ref == 'refs/heads/main' && github.event_name == 'push'
       run: |
         terraform apply -auto-approve \
                         -input=false \
                         -var-file=envs/dev.tfvars \
+                        -var lambda-artifact-s3-bucket=${{secrets.TFS3BUCKET}} \
+                        -var lambda-artifact-s3-key=sample-lambda/artifacts/sample-lambda-$GITHUB_SHA.zip
+
+  deploy-prod:
+    name: 'deploy'
+    runs-on: ubuntu-latest
+    needs: build
+    environment: prod
+    permissions:
+      id-token: write
+      contents: read
+
+    # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+    # Checkout the repository to the GitHub Actions runner
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    # - name: Get branch name (merge)
+    #   if: github.event_name != 'pull_request'
+    #   shell: bash
+    #   run: echo "BRANCH_NAME=$(echo ${{github.ref_name}})" >> $GITHUB_ENV
+
+    # - name: Get branch name (pull request)
+    #   if: github.event_name == 'pull_request'
+    #   shell: bash
+    #   run: echo "BRANCH_NAME=$(echo ${{github.base_ref}})" >> $GITHUB_ENV
+
+    # - name: Print branch name
+    #   shell: bash
+    #   run: echo ${{ env.BRANCH_NAME }}
+
+
+    - uses: actions/setup-python@v4
+      with:
+        python-version: '3.8' 
+        cache: 'pip'
+
+    # Install the latest version of Terraform CLI and configure the Terraform CLI configuration file with a Terraform Cloud user API token
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v1
+      with:
+        cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
+
+    - name: Configure AWS credentials from Test account
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        role-to-assume: ${{ secrets.IAMROLEARN }}
+        aws-region: ${{ vars.AWSRegion }}
+
+    # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
+    - name: Terraform Init
+      working-directory: ./terraform-manifests
+      run: |
+        terraform init -reconfigure \
+          -backend-config="bucket=${{ secrets.TFS3BUCKET }}" \
+          -backend-config="key=${{secrets.TFS3KEY}}/prod/terraform.tfstate" \
+          -backend-config="region=${{vars.AWSRegion}}"
+
+    # Checks that all Terraform configuration files adhere to a canonical format
+    - name: Terraform Format
+      working-directory: ./terraform-manifests
+      run: terraform fmt -check
+
+    # Generates an execution plan for Terraform
+    - name: Terraform Plan
+      working-directory: ./terraform-manifests
+      run: terraform plan -input=false -var-file=envs/prod.tfvars
+
+      # On push to "main", build or change infrastructure according to Terraform configuration files
+      # Note: It is recommended to set up a required "strict" status check in your repository for "Terraform Cloud". See the documentation on "strict" required status checks for more information: https://help.github.com/en/github/administering-a-repository/types-of-required-status-checks
+    - name: Terraform Apply
+      working-directory: ./terraform-manifests
+      if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+      run: |
+        terraform apply -auto-approve \
+                        -input=false \
+                        -var-file=envs/prod.tfvars \
                         -var lambda-artifact-s3-bucket=${{secrets.TFS3BUCKET}} \
                         -var lambda-artifact-s3-key=sample-lambda/artifacts/sample-lambda-$GITHUB_SHA.zip
