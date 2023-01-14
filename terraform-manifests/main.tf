@@ -14,8 +14,9 @@ module "lambda_function" {
 
 
   s3_existing_package = {
-    bucket = var.lambda-artifact-s3-bucket
-    key    = var.lambda-artifact-s3-key
+    bucket     = var.lambda-artifact-s3-bucket
+    key        = var.lambda-artifact-s3-key
+    version_id = null
   }
 
 
