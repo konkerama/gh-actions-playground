@@ -1,3 +1,4 @@
+'''Python Tests'''
 import index
 
 def test_lambda_handler():
