@@ -25,3 +25,7 @@ variable "memory" {
   default = "128"
 }
 
+variable "url" {
+  type    = string
+}
+

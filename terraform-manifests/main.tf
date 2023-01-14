@@ -9,6 +9,7 @@ module "lambda_function" {
 
   environment_variables = {
     ENV = var.environment
+    URL = var.url
   }
 
 
