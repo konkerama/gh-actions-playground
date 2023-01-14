@@ -5,8 +5,7 @@ import os
 import requests
 
 ENV = os.environ['ENV']
-
-URL = "https://raw.githubusercontent.com/konkerama/konkerama.github.io/master/contact-info/index.json"
+URL = os.environ['URL']
 
 def lambda_handler(event, context):
     ''' Lambda Handler '''
