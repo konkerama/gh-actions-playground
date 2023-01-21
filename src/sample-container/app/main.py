@@ -49,7 +49,7 @@ def home():
     if(request.method == 'GET'):
         logger.info('sample log')
         response = get_lambda_response()
-        data = f"hello world from {config['General']['stage']}"
+        data = f"Hello Github Actions from {config['General']['stage']}"
         return jsonify({'data': data,'lambda-response': response})
     return jsonify({'request': 'POST'})
 
