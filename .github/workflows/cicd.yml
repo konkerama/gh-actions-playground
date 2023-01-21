@@ -110,7 +110,7 @@ jobs:
         with:
           context: ./src/sample-container
           push: true
-          tags: user/app:$GITHUB_SHA
+          tags: konkerama/sample-python-container:$GITHUB_SHA
 
   # deploy-dev:
   #   name: 'deploy-dev'
