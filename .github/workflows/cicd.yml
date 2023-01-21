@@ -120,7 +120,7 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           context: ./src/sample-container
-          push: true
+          push: (github.ref == 'refs/heads/main' && github.event_name == 'push')
           tags: konkerama/sample-python-container:${{github.sha}}
           cache-from: type=gha
           cache-to: type=gha,mode=max
@@ -173,7 +173,8 @@ jobs:
     # Generates an execution plan for Terraform
     - name: Terraform Plan
       working-directory: ./terraform-manifests
-      run: terraform plan -input=false \
+      run: |
+        terraform plan -input=false \
                           -var-file=envs/dev.tfvars \
                           -var lambda-artifact-s3-bucket=${{secrets.TFS3BUCKET}} \
                           -var lambda-artifact-s3-key=sample-lambda/artifacts/sample-lambda-$GITHUB_SHA.zip \
