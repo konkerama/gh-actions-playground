@@ -26,4 +26,12 @@ module "lambda_function" {
   tags = {
     Name = "my-lambda1"
   }
+
+
+}
+
+resource "aws_ssm_parameter" "lambda-name" {
+  name  = "/${var.resource_name}/${var.environment}/lambda/name"
+  type  = "String"
+  value = module.lambda_function.lambda_function_name
 }

@@ -55,15 +55,15 @@ jobs:
       working-directory: ./terraform-manifests
       run: terraform destroy --auto-approve -var-file=envs/dev.tfvars
 
-    # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
-    - name: Terraform Init Prod
-      working-directory: ./terraform-manifests
-      run: |
-        terraform init -reconfigure \
-          -backend-config="bucket=${{ secrets.TFS3BUCKET }}" \
-          -backend-config="key=${{secrets.TFS3KEY}}/prod/terraform.tfstate" \
-          -backend-config="region=${{vars.AWSRegion}}"
+    # # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
+    # - name: Terraform Init Prod
+    #   working-directory: ./terraform-manifests
+    #   run: |
+    #     terraform init -reconfigure \
+    #       -backend-config="bucket=${{ secrets.TFS3BUCKET }}" \
+    #       -backend-config="key=${{secrets.TFS3KEY}}/prod/terraform.tfstate" \
+    #       -backend-config="region=${{vars.AWSRegion}}"
 
-    - name: Terraform Destroy Prod
-      working-directory: ./terraform-manifests
-      run: terraform destroy --auto-approve -var-file=envs/prod.tfvars
+    # - name: Terraform Destroy Prod
+    #   working-directory: ./terraform-manifests
+    #   run: terraform destroy --auto-approve -var-file=envs/prod.tfvars

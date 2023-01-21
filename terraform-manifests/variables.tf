@@ -5,11 +5,6 @@ variable "aws_region" {
   type        = string
 }
 
-# variable "s3_bucket" {
-#   description = "S3 Bucket for storing artifacts & tfstate"
-#   type        = string
-# }
-
 variable "resource_name" {
   description = "Naming convention for the AWS Resources to be created"
   type        = string
@@ -30,12 +25,14 @@ variable "url" {
 }
 
 variable "lambda-artifact-s3-bucket" {
-  type    = string
-  default = "to-be-overridden"
+  type = string
 }
 
 variable "lambda-artifact-s3-key" {
-  type    = string
-  default = "to-be-overridden"
+  type = string
 }
 
+variable "commit-id" {
+  type    = string
+  default = "latest"
+}
