@@ -1,5 +1,5 @@
 # Generic Variables
-resource_name = "sample-lambda"
+resource_name = "sample-python"
 environment   = "dev"
 memory        = 128
 aws_region    = "eu-west-1"
