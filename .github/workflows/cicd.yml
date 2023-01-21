@@ -87,6 +87,7 @@ jobs:
         aws-region: ${{ vars.AWSRegion }}
 
     - name: Push to S3
+      if: github.ref == 'refs/heads/main' && github.event_name == 'push'
       working-directory: src/sample-function
       run: aws s3 cp ./sample-lambda-$GITHUB_SHA.zip s3://${{secrets.TFS3BUCKET}}/sample-lambda/artifacts/sample-lambda-$GITHUB_SHA.zip
 
