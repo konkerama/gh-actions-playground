@@ -80,8 +80,8 @@ jobs:
         zip sample-lambda-$GITHUB_SHA.zip *.py
 
     - name: Configure AWS credentials from Test account
-      uses: aws-actions/configure-aws-credentials@v1
       if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+      uses: aws-actions/configure-aws-credentials@v1
       with:
         role-to-assume: ${{ secrets.IAMROLEARN }}
         aws-region: ${{ vars.AWSRegion }}
