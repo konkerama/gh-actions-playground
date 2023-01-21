@@ -1,11 +1,10 @@
-# Using flask to make an api
+''' Using flask to make an api '''
 # import necessary libraries and functions
+import json
+import logging
 from flask import Flask, jsonify, request
 import helper
 import boto3
-import os
-import json
-import logging
 from sys import stdout
 
 logging.basicConfig(level=logging.INFO, format="[%(asctime)s] %(name)-12s %(levelname)-8s %(filename)s:%(funcName)s %(message)s")
@@ -30,14 +29,14 @@ config = helper.read_config()
 def get_lambda_response():
     if config['Lambda']['type'] == "mock":
         return "mock response from lambda"
-    else:
-        logger.info(f"Getting SSM Parameter Value: {config['Lambda']['ssm-param-name']}")
-        ssm_param = client.get_parameter(Name=config['Lambda']['ssm-param-name'])
-        lambda_name=ssm_param['Parameter']['Value']
-        logger.info (f"Invoking Lambda: {lambda_name}")
-        response = client_lambda.invoke(FunctionName=lambda_name)
-        payload = json.loads(response['Payload'].read().decode("utf-8"))
-        return payload
+
+    logger.info("Getting SSM Parameter Value: %s",{config['Lambda']['ssm-param-name']})
+    ssm_param = client.get_parameter(Name=config['Lambda']['ssm-param-name'])
+    lambda_name=ssm_param['Parameter']['Value']
+    logger.info ("Invoking Lambda: %s",{lambda_name})
+    response = client_lambda.invoke(FunctionName=lambda_name)
+    payload = json.loads(response['Payload'].read().decode("utf-8"))
+    return payload
 
 # creating a Flask app
 app = Flask(__name__)
@@ -52,6 +51,7 @@ def home():
         response = get_lambda_response()
         data = f"hello world from {config['General']['stage']}"
         return jsonify({'data': data,'lambda-response': response})
+    return jsonify({'request': 'POST'})
 
 # A simple function to calculate the square of a number
 # the number to be squared is sent in the URL when we use GET
