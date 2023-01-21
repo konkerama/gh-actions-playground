@@ -1,0 +1,12 @@
+version: "3"
+
+services:
+  python:
+    image: sample-python-container:latest
+    ports:
+      - 8080:8080
+    restart: unless-stopped
+    env_file:
+      - ~/.aws/credentials
+    environment:
+      - ENV=dev
