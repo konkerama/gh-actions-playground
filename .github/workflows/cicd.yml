@@ -12,9 +12,6 @@ jobs:
   build:
     name: 'build'
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        python-version: ["3.8"]
     permissions:
       id-token: write
       contents: read
@@ -36,10 +33,10 @@ jobs:
         role-to-assume: ${{ secrets.IAMROLEARN }}
         aws-region: ${{ vars.AWSRegion }}
 
-    - name: Set up Python ${{ matrix.python-version }}
+    - name: Set up Python 3.8
       uses: actions/setup-python@v4
       with:
-        python-version: ${{ matrix.python-version }}
+        python-version: 3.8
         cache: 'pip'
 
     - name: Install dependencies
@@ -117,6 +114,8 @@ jobs:
           context: ./src/sample-container
           push: true
           tags: konkerama/sample-python-container:${{github.sha}}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
 
   # deploy-dev:
   #   name: 'deploy-dev'
