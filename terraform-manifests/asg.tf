@@ -32,7 +32,7 @@ data "template_file" "init" {
   template = file("${path.module}/../src/sample-container/server/ec2_user_data.sh")
   vars = {
     commit_id = "${var.commit-id}"
-    env = "dev"
+    env       = "dev"
     log_group = "/aws/ec2/${var.resource_name}-${var.environment}"
   }
 }
@@ -135,6 +135,6 @@ resource "aws_security_group_rule" "allow_ingress" {
 
 
 resource "aws_cloudwatch_log_group" "ec2_log_group" {
-  name = "/aws/ec2/${var.resource_name}-${var.environment}"
-  retention_in_days=14
+  name              = "/aws/ec2/${var.resource_name}-${var.environment}"
+  retention_in_days = 14
 }
