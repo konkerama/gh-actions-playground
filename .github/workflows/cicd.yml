@@ -228,7 +228,6 @@ jobs:
 
     - name: Download plan.out
       uses: actions/download-artifact@v3
-      working-directory: ./terraform-manifests
       with:
         name: tf-plan
         path: ./terraform-manifests
