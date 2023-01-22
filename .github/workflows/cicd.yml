@@ -186,12 +186,12 @@ jobs:
                           -var commit-id=${{github.sha}} \
                           -out=plan.out
 
-      - name: Upload plan.out
-        uses: actions/upload-artifact@v3
-        working-directory: ./terraform-manifests
-        with:
-          name: tf-plan
-          path: plan.out
+    - name: Upload plan.out
+      uses: actions/upload-artifact@v3
+      working-directory: ./terraform-manifests
+      with:
+        name: tf-plan
+        path: plan.out
 
 
 
