@@ -225,6 +225,11 @@ jobs:
         role-to-assume: ${{ secrets.IAMROLEARN }}
         aws-region: ${{ vars.AWSRegion }}
 
+    - name: Download plan.out
+      uses: actions/download-artifact@v3
+      with:
+        name: tf-plan
+
     # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
     - name: Terraform Init
       working-directory: ./terraform-manifests
