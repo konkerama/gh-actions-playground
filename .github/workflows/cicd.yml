@@ -231,6 +231,7 @@ jobs:
       working-directory: ./terraform-manifests
       with:
         name: tf-plan
+        path: ./terraform-manifests
 
     # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
     - name: Terraform Init
