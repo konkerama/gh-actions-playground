@@ -138,11 +138,6 @@ jobs:
     permissions:
       id-token: write
       contents: read
-    env:
-      TF_CLI_ARGS: '-var-file=envs/dev.tfvars'
-      TF_VAR_lambda_artifact_s3_bucket: ${{secrets.TFS3BUCKET}}
-      TF_VAR_lambda_artifact_s3_key: sample-lambda/artifacts/sample-lambda-$GITHUB_SHA.zip
-      TF_VAR_commit_id: $CI_COMMIT_SHA
 
     # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
     defaults:
@@ -184,7 +179,12 @@ jobs:
     - name: Terraform Plan
       working-directory: ./terraform-manifests
       run: |
-        terraform plan -out=plan.out
+        terraform plan -input=false \
+                          -var-file=envs/dev.tfvars \
+                          -var lambda-artifact-s3-bucket=${{secrets.TFS3BUCKET}} \
+                          -var lambda-artifact-s3-key=sample-lambda/artifacts/sample-lambda-$GITHUB_SHA.zip \
+                          -var commit-id=${{github.sha}} \
+                          -out=plan.out
 
     - name: Upload plan.out
       uses: actions/upload-artifact@v3
