@@ -81,12 +81,16 @@ jobs:
 
     - name: Package Application
       working-directory: src/sample-function
-      run: |
-        pip install -t ./package -r requirements.txt
-        cd package
-        zip -r ../sample-lambda-$GITHUB_SHA.zip .
-        cd ..
-        zip sample-lambda-$GITHUB_SHA.zip *.py
+      uses:  konkerama/package-python-lambda-action@v1.1.0
+
+    # - name: Package Application
+    #   working-directory: src/sample-function
+    #   run: |
+    #     pip install -t ./package -r requirements.txt
+    #     cd package
+    #     zip -r ../sample-lambda-$GITHUB_SHA.zip .
+    #     cd ..
+    #     zip sample-lambda-$GITHUB_SHA.zip *.py
 
     - name: Configure AWS credentials from Test account
       if: github.ref == 'refs/heads/main' && github.event_name == 'push'
