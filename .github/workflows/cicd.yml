@@ -81,7 +81,7 @@ jobs:
 
     - name: Package Application
       working-directory: src/sample-function
-      uses:  konkerama/package-python-lambda-action@v1.1.0
+      uses: konkerama/package-python-lambda-action@v1.1.0
 
     # - name: Package Application
     #   working-directory: src/sample-function
