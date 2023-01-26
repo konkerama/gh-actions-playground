@@ -60,7 +60,7 @@ jobs:
         cache: 'pip'
 
     - name: Package Lambda
-      uses: konkerama/package-python-lambda-action@v1.1.3
+      uses: konkerama/package-python-lambda-action@v1.1.4
       with:
         directory: src/sample-function
 
