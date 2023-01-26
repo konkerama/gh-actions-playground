@@ -15,6 +15,15 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
+    - name: Hello world action step
+      id: hello
+      uses:  konkerama /package-python-lambda-action@v1
+      with:
+        who-to-greet: 'Mona the Octocat'
+    # Use the output from the `hello` step
+    - name: Get the output time
+      run: echo "The time was ${{ steps.hello.outputs.time }}"
+
     - name: Set up Python 3.8
       uses: actions/setup-python@v4
       with:
